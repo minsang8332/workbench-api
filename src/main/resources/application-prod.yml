@@ -1,0 +1,9 @@
+spring:
+    datasource:
+        url: jdbc:mariadb://mariadb:3306/${MARIADB_DATABASE}
+        username: ${MARIADB_USER}
+        password: ${MARIADB_PASSWORD}
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        show-sql: false
