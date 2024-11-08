@@ -1,5 +1,7 @@
 spring:
     datasource:
+        # 컨테이너 내부망 DB
+        # https://github.com/minsang8332/cloud-deployer/blob/main/.env
         url: jdbc:mariadb://mariadb:3306/${MARIADB_DATABASE}
         username: ${MARIADB_USER}
         password: ${MARIADB_PASSWORD}

@@ -1,6 +1,9 @@
 spring:
     profiles:
-        active: dev
+        active: local
+    messages:
+        basename: messages
+        encoding: UTF-8
 server:
     port: 8080
     servlet:

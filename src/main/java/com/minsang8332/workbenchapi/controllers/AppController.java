@@ -1,8 +1,7 @@
-package com.minsang8332.workbenchapi.controller;
+package com.minsang8332.workbenchapi.controllers;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
