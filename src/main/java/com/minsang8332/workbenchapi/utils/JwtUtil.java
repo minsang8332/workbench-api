@@ -1,4 +1,4 @@
-package com.minsang8332.workbenchapi.security;
+package com.minsang8332.workbenchapi.utils;
 
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,8 +14,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
-@Service
-public class JwtService {
+@Component
+public class JwtUtil {
 
     @Value("${jwt.secret-key}")
     private String secretKey;

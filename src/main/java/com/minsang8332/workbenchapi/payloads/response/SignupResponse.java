@@ -4,8 +4,5 @@ import lombok.Data;
 
 @Data
 public class SignupResponse {
-
-    private String email;
-
-    private String password;
+    private boolean result;
 }

@@ -1,5 +1,7 @@
 package com.minsang8332.workbenchapi.security;
 
+import com.minsang8332.workbenchapi.services.AuthenticationService;
+import com.minsang8332.workbenchapi.utils.JwtUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +21,9 @@ import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class JwtRequestFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final JwtUtil jwtUtil;
     private final UserDetailsService userDetailsService;
 
     @Override
@@ -32,12 +34,12 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        String username = jwtService.getUsername(token);
+        String username = jwtUtil.getUsername(token);
         // 토큰에서 유저명을 추출 했지만 권한 정보가 없는 경우
         if (StringUtils.hasText(username) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
             UserDetailsImpl user = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
             // 토큰이 유효하다면
-            if (username.equals(user.getUsername()) && !jwtService.isExpired(token)) {
+            if (username.equals(user.getUsername()) && !jwtUtil.isExpired(token)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                         user,
                         null,
