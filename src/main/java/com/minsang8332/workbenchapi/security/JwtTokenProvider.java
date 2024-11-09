@@ -76,7 +76,7 @@ public class JwtTokenProvider {
         return getClaim(token, Claims::getExpiration);
     }
 
-    public String getUsernameFromToken(String token) {
+    public String getUsername(String token) {
         return getClaim(token, Claims::getSubject);
     }
 
