@@ -8,3 +8,8 @@ server:
     port: 8080
     servlet:
           context-path: /api/v1
+
+jwt:
+    expiration:
+        access-token: 3600000
+        refresh-token: 604800000

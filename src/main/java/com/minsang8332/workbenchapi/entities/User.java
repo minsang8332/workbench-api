@@ -29,21 +29,16 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank
-    @Column(name = "username")
-    @Size(max = 15)
-    private String username;
-
-    @NotBlank
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @Column(name = "password")
-    private String password;
-
     @Email
     @NotBlank
     @Size(max = 100)
     @Column(name = "email", unique = true)
     private String email;
+
+    @NotBlank
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(name = "password")
+    private String password;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
