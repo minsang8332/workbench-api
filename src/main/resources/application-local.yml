@@ -5,7 +5,7 @@ spring:
         password: root
     jpa:
         hibernate:
-            ddl-auto: create-drop
+            ddl-auto: update
         show-sql: true
 jwt:
     secret-key: ca5d772b3e14a30592e9c89f94273bcfaea5b778a6f4ce2417d33dc20862177b

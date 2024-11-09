@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
@@ -16,32 +15,45 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends OncePerRequestFilter {
+public class JwtRequestFilter extends OncePerRequestFilter {
 
-    private JwtTokenProvider jwtTokenProvider;
-
-    private UserDetailsService userDetailsService;
+    private final JwtService jwtService;
+    private final UserDetailsService userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if (StringUtils.hasText(header) && header.startsWith("Bearer ")) {
-            String token = header.substring(7);
-            String username = jwtTokenProvider.getUsername(token);
-            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        String token = resolveToken(request);
+        // 토큰이 없는 경우
+        if (!StringUtils.hasText(token)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        String username = jwtService.getUsername(token);
+        // 토큰에서 유저명을 추출 했지만 권한 정보가 없는 경우
+        if (StringUtils.hasText(username) && Objects.isNull(SecurityContextHolder.getContext().getAuthentication())) {
+            UserDetailsImpl user = (UserDetailsImpl) userDetailsService.loadUserByUsername(username);
+            // 토큰이 유효하다면
+            if (username.equals(user.getUsername()) && !jwtService.isExpired(token)) {
                 UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                        userDetails,
+                        user,
                         null,
-                        userDetails.getAuthorities()
+                        user.getAuthorities()
                 );
                 authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
         filterChain.doFilter(request, response);
+    }
+    private String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }
